@@ -1,14 +1,16 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Project2.DataAccess.Repository.IRepository;
 using Project2.Models;
+using Project2.Models.ViewModels;
 
 namespace Project2.Areas.Admin.Controllers
 {
-    public class CoverTypeController : Controller
+    public class ProductController : Controller
     {
         private readonly IUnitOfWork _unitOfWork;
-        public CoverTypeController(IUnitOfWork unitOfWork)
+        public ProductController(IUnitOfWork unitOfWork)
         {
             _unitOfWork = unitOfWork;
         }
@@ -19,50 +21,43 @@ namespace Project2.Areas.Admin.Controllers
             return View(objCoverTypeList);
         }
 
-        // GET: CeverTypeController/Create
-        public IActionResult Create()
-        {
-            return View();
-        }
-
-        // POST: CeverTypeController/Create
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public IActionResult Create(CoverType obj)
-        {
-            if (ModelState.IsValid)
-            {
-                _unitOfWork.CoverType.Add(obj);
-                _unitOfWork.Save();
-                TempData["success"] = "Cover Type Created Successfully";
-                return RedirectToAction("Index");
-            }
-            return View(obj);
-        }
-
         // GET: CeverTypeController/Edit/5
-        public IActionResult Edit(int? id)
+        public IActionResult Upsert(int? id)
         {
-            if(id == null || id == 0)
+            ProductVM productVM = new()
             {
-                return NotFound();
-            }
-            var CoverTypeFromDbFirst = _unitOfWork.CoverType.GetFirstOrDefault(u => u.Id == id);
-            if (CoverTypeFromDbFirst == null)
+                Product = new(),
+                CategoryList = _unitOfWork.Category.GetAll().Select(i => new SelectListItem
+                {
+                    Text = i.Name,
+                    Value = i.Id.ToString()
+                }),
+                CoverTypeList = _unitOfWork.CoverType.GetAll().Select(i => new SelectListItem
+                {
+                    Text = i.Name,
+                    Value = i.Id.ToString()
+                }),
+            };
+            if (id == null || id == 0)
             {
-                return NotFound();
+                return View(productVM);
             }
-            return View(CoverTypeFromDbFirst);
+            else
+            {
+
+            }
+
+            return View(productVM);
         }
 
         // POST: CeverTypeController/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Edit(CoverType obj)
+        public IActionResult Upsert(ProductVM obj, IFormFile file)
         {
             if (ModelState.IsValid)
             {
-                _unitOfWork.CoverType.Update(obj);
+                //_unitOfWork.CoverType.Update(obj);
                 _unitOfWork.Save();
                 TempData["success"] = "Cover Type Updated Successfully";
                 return RedirectToAction("Index");
