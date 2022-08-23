@@ -12,8 +12,8 @@ using Project2.Data;
 namespace Project2.DataAccess.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20220329024420_addCoverTypes")]
-    partial class addCoverTypes
+    [Migration("20220823012256_initial-migration")]
+    partial class initialmigration
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
